@@ -2,6 +2,7 @@
 #For full credit, provide answers for at least 7/10
 
 #List names of students collaborating with: 
+#Laura Ashlock
 
 ### SETUP: RUN THIS BEFORE STARTING ----------
 
@@ -17,6 +18,10 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+glimpse(ds)
+glimpse("Year")
+ds$Year <- as.numeric(ds$Year)
+typeof("Year")
 
 ### Question 2 ---------- 
 
@@ -24,6 +29,11 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 # change ds so that all of the variables are lowercase
 
 #ANSWER
+
+library(dplyr)
+ds <- ds %>% 
+  `names<-`(tolower(names(.)))
+
 
 ### Question 3 ----------
 
@@ -33,11 +43,15 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+mutate(ds, decade= (floor(ds$year/10) *10))
+
 ### Question 4 ----------
 
 # Sort the dataset by rank so that 1 is at the top
 
 #ANSWER
+
+ds <- arrange(ds, rank)
 
 ### Question 5 ----------
 
@@ -46,6 +60,7 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+top10 <- slice_head(ds, n=10)
 
 ### Question 6 ----------
 
@@ -54,6 +69,9 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+ds_sum <- ds %>% summarize(min_year = min(year, na.rm = T), max_year = max(year, na.rm = T), avg_year = mean(year, na.rm=T) )
+
+print(ds_sum)
 
 ### Question 7 ----------
 
@@ -62,6 +80,9 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 # Use one filter command only, and sort the responses by year
 
 #ANSWER
+
+filter(ds, year %in% c(1879, 2020, 1980))%>% 
+  arrange(desc(year))
 
 
 ### Question 8 ---------- 
@@ -74,6 +95,13 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+ds <- ds %>% mutate(year = ifelse(year == 1879,1979, year)) %>%
+  mutate(ds, decade= (floor(ds$year/ 10) * 10))
+ds_sum <- ds %>% summarize(min_year = min(year, na.rm=TRUE), max_year = max(year, na.rm=TRUE), avg_year = mean(year, na.rm=TRUE))
+print(ds_sum)
+filter(ds, year %in% c(1937, 1981, 2020)) %>% 
+  arrange(desc(year))
+
 
 ### Question 9 ---------
 
@@ -85,6 +113,7 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 
 #ANSWER
 
+ds %>% group_by(decade) %>% summarise(avg_rank = mean(rank, na.rm = T), n = n())
 
 ### Question 10 --------
 
@@ -94,5 +123,7 @@ ds <- read_csv("data_raw/rolling_stone_500.csv")
 # Use the pipe %>% to string the commands together
 
 #ANSWER
+
+ds %>% count(decade) %>% slice_max(order_by = n)
 
   
